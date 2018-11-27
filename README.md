@@ -1,6 +1,6 @@
 # brottsplatskartan [![Build Status](https://travis-ci.com/chrillux/brottsplatskartan.svg?branch=master)](https://travis-ci.com/chrillux/brottsplatskartan)
 
-A simple API wrapper for [Brottsplatskartan](brottsplatskartan.se)
+A simple API wrapper for [Brottsplatskartan](https://brottsplatskartan.se)
 
 ## Install
 
