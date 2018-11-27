@@ -1,4 +1,4 @@
-1"""Setup Brottsplatskartan API wrapper"""
+"""Setup Brottsplatskartan API wrapper"""
 
 from setuptools import find_packages, setup
 
