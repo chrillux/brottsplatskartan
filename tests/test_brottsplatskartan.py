@@ -39,15 +39,20 @@ class TestBrottsplatskartan(unittest.TestCase):
     def test_no_parameters(self):
         b = brottsplatskartan.BrottsplatsKartan()
         self.assertEqual(b.url, BROTTS_URL + "/events")
-        self.assertEqual(b.parameters.get('area'), 'Stockholms län')
+        self.assertEqual(b.parameters.get('areas'), ['Stockholms län'])
         self.assertEqual(b.parameters.get('app'), 'bpk')
 
-    def test_area_parameter(self):
+    def test_areas_parameter(self):
         b = brottsplatskartan.BrottsplatsKartan(
-            area="Göteborgs län"
+            areas=["Stockholms län"]
         )
-        self.assertEqual(b.parameters.get('area'), 'Göteborgs län')
+        self.assertEqual(b.parameters.get('areas'), ['Stockholms län'])
         self.assertEqual(b.url, BROTTS_URL + "/events")
+
+    def test_non_valid_areas_parameter(self):
+        self.assertRaises(ValueError,
+                          brottsplatskartan.BrottsplatsKartan,
+                          areas=["Nonexistent län"])
 
     def test_long_lat_parameters(self):
         b = brottsplatskartan.BrottsplatsKartan(

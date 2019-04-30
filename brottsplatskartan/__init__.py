@@ -1,3 +1,4 @@
+# coding=utf-8
 """ Brottsplatskartan API """
 
 import datetime
@@ -6,6 +7,13 @@ from typing import Union
 
 import requests
 
+AREAS = ["Blekinge län", "Dalarnas län", "Gotlands län", "Gävleborgs län",
+         "Hallands län", "Jämtlands län", "Jönköpings län", "Kalmar län",
+         "Kronobergs län", "Norrbottens län", "Skåne län", "Stockholms län",
+         "Södermanlands län", "Uppsala län", "Värmlands län", "Västerbottens län",
+         "Västernorrlands län", "Västmanlands län", "Västra Götalands län",
+         "Örebro län", "Östergötlands län"]
+
 ATTRIBUTION = "Information provided by brottsplatskartan.se"
 BROTTS_URL = "https://brottsplatskartan.se/api"
 
@@ -13,14 +21,18 @@ BROTTS_URL = "https://brottsplatskartan.se/api"
 class BrottsplatsKartan: # pylint: disable=too-few-public-methods
     """ Brottsplatskartan API wrapper. """
 
-    def __init__(self, app='bpk', area=None, longitude=None, latitude=None):
+    def __init__(self, app='bpk', areas=None, longitude=None, latitude=None):
         """ Setup initial brottsplatskartan configuration. """
 
         self.parameters = {"app": app}
+        self.incidents = {}
 
-        if area:
+        if areas:
+            for area in areas:
+                if area not in AREAS:
+                    raise ValueError('not a valid area: {}'.format(area))
             self.url = BROTTS_URL + "/events"
-            self.parameters["area"] = area
+            self.parameters["areas"] = areas
         elif longitude and latitude:
             self.url = BROTTS_URL + "/eventsNearby"
             self.parameters["lat"] = latitude
@@ -28,7 +40,7 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
         else:
             # Missing parameters. Using default values.
             self.url = BROTTS_URL + "/events"
-            self.parameters["area"] = "Stockholms län"
+            self.parameters["areas"] = ["Stockholms län"]
 
     @staticmethod
     def _get_datetime_as_ymd(date: time.struct_time) -> datetime.datetime:
@@ -39,8 +51,19 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
 
         return datetime_ymd
 
-    def get_incidents(self) -> Union[list, bool]:
-        """ Get today's incidents. """
+    @staticmethod
+    def is_ratelimited(requests_response) -> bool:
+        """ Check if we have been ratelimited. """
+        rate_limited = requests_response.headers.get('x-ratelimit-reset')
+        if rate_limited:
+            print("You have been rate limited until " + time.strftime(
+                '%Y-%m-%d %H:%M:%S%z', time.localtime(rate_limited)))
+            return True
+        return False
+
+    def get_incidents_from_bpk(self, parameters) -> Union[list, bool]:
+        """ Make the API calls to get incidents """
+
         brotts_entries_left = True
         incidents_today = []
         url = self.url
@@ -48,15 +71,9 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
         while brotts_entries_left:
 
             requests_response = requests.get(
-                url, params=self.parameters)
+                url, params=parameters)
 
-            rate_limited = requests_response.headers.get('x-ratelimit-reset')
-            if rate_limited:
-                print("You have been rate limited until " +
-                      time.strftime(
-                          '%Y-%m-%d %H:%M:%S%z',
-                          time.localtime(rate_limited)
-                      ))
+            if self.is_ratelimited(requests_response):
                 return False
 
             requests_response = requests_response.json()
@@ -90,3 +107,24 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
                 break
 
         return incidents_today
+
+
+    def get_incidents(self) -> Union[list, bool]:
+        """ Get today's incidents. """
+        areas = self.parameters.get("areas")
+        incidents = []
+        if areas:
+            parameters = {}
+            self.incidents.update({"areas": {}})
+            for area in areas:
+                parameters["app"] = self.parameters.get("app")
+                parameters["area"] = area
+                incidents = self.get_incidents_from_bpk(parameters)
+                self.incidents["areas"].update({area: incidents})
+        else:
+            incidents = self.get_incidents_from_bpk(self.parameters)
+            self.incidents["latlng"] = incidents
+        if incidents:
+            return self.incidents
+
+        return False
