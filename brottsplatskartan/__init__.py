@@ -80,6 +80,7 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
 
             incidents = requests_response.get("data")
             if not incidents:
+                incidents_today = []
                 break
 
             datetime_today = datetime.date.today()
@@ -123,7 +124,8 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
         else:
             incidents = self.get_incidents_from_bpk(self.parameters)
             self.incidents.update({"latlng": incidents})
-        if incidents:
-            return self.incidents
+        if incidents is False:
+            return False
 
-        return False
+        return self.incidents
+
