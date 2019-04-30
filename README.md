@@ -11,11 +11,21 @@ A simple API wrapper for [Brottsplatskartan](https://brottsplatskartan.se)
 ```python
 import brottsplatskartan
 
-b = brottsplatskartan.BrottsplatsKartan(app=app, area=area, longitude=longitude, latitude=latitude)
+b1 = brottsplatskartan.BrottsplatsKartan(app=app, areas=areas)
+b2 = brottsplatskartan.BrottsplatsKartan(app=app, longitude=longitude, latitude=latitude)
 
-for incident in b.get_incidents():
+for incident in b1.get_incidents():
+  print(incident)
+for incident in b2.get_incidents():
   print(incident)
 ```
+
+app: unique app value, see https://brottsplatskartan.se/sida/api
+areas = Python list of valid areas, see https://brottsplatskartan.se/api/areas
+longitude = Longitude
+latitude = Latitude
+
+If setting "areas" parameter, longitude and latitude will be ignored.
 
 ## Development
 
