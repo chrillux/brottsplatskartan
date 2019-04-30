@@ -21,8 +21,11 @@ for incident in b2.get_incidents():
 ```
 
 app: unique app value, see https://brottsplatskartan.se/sida/api
+
 areas = Python list of valid areas, see https://brottsplatskartan.se/api/areas
+
 longitude = Longitude
+
 latitude = Latitude
 
 If setting "areas" parameter, longitude and latitude will be ignored.
