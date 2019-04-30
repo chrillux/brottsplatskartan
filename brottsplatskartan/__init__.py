@@ -115,15 +115,14 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
         incidents = []
         if areas:
             parameters = {}
-            self.incidents.update({"areas": {}})
             for area in areas:
                 parameters["app"] = self.parameters.get("app")
                 parameters["area"] = area
                 incidents = self.get_incidents_from_bpk(parameters)
-                self.incidents["areas"].update({area: incidents})
+                self.incidents.update({area: incidents})
         else:
             incidents = self.get_incidents_from_bpk(self.parameters)
-            self.incidents["latlng"] = incidents
+            self.incidents.update({"latlng": incidents})
         if incidents:
             return self.incidents
 

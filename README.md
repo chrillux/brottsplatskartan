@@ -14,10 +14,15 @@ import brottsplatskartan
 b1 = brottsplatskartan.BrottsplatsKartan(app=app, areas=areas)
 b2 = brottsplatskartan.BrottsplatsKartan(app=app, longitude=longitude, latitude=latitude)
 
-for incident in b1.get_incidents():
-  print(incident)
-for incident in b2.get_incidents():
-  print(incident)
+incidents = b1.get_incidents()
+for incident_area in incidents:
+    for incident in incidents[incident_area]:
+        print(incident)
+
+incidents = b2.get_incidents()
+for incident_area in incidents:
+    for incident in incidents[incident_area]:
+        print(incident)
 ```
 
 app: unique app value, see https://brottsplatskartan.se/sida/api
