@@ -128,4 +128,3 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
             return False
 
         return self.incidents
-
