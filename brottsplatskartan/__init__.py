@@ -113,18 +113,19 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
     def get_incidents(self) -> Union[list, bool]:
         """ Get today's incidents. """
         areas = self.parameters.get("areas")
-        incidents = []
+        all_incidents = {}
+        current_incidents = []
         if areas:
             parameters = {}
             for area in areas:
                 parameters["app"] = self.parameters.get("app")
                 parameters["area"] = area
-                incidents = self.get_incidents_from_bpk(parameters)
-                self.incidents.update({area: incidents})
+                current_incidents = self.get_incidents_from_bpk(parameters)
+                all_incidents.update({area: current_incidents})
         else:
-            incidents = self.get_incidents_from_bpk(self.parameters)
-            self.incidents.update({"latlng": incidents})
-        if incidents is False:
+            current_incidents = self.get_incidents_from_bpk(self.parameters)
+            all_incidents.update({"latlng": current_incidents})
+        if current_incidents is False:
             return False
 
-        return self.incidents
+        return all_incidents
