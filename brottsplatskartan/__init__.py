@@ -57,7 +57,7 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
         rate_limited = requests_response.headers.get('x-ratelimit-reset')
         if rate_limited:
             print("You have been rate limited until " + time.strftime(
-                '%Y-%m-%d %H:%M:%S%z', time.localtime(rate_limited)))
+                '%Y-%m-%d %H:%M:%S%z', time.localtime(int(rate_limited))))
             return True
         return False
 
