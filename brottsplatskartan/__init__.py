@@ -8,18 +8,20 @@ from typing import Union
 
 import requests
 
-AREAS = ["Blekinge län", "Dalarnas län", "Gotlands län", "Gävleborgs län",
-         "Hallands län", "Jämtlands län", "Jönköpings län", "Kalmar län",
-         "Kronobergs län", "Norrbottens län", "Skåne län", "Stockholms län",
-         "Södermanlands län", "Uppsala län", "Värmlands län", "Västerbottens län",
-         "Västernorrlands län", "Västmanlands län", "Västra Götalands län",
-         "Örebro län", "Östergötlands län"]
+AREAS = [
+    "Blekinge län", "Dalarnas län", "Gotlands län", "Gävleborgs län",
+    "Hallands län", "Jämtlands län", "Jönköpings län", "Kalmar län",
+    "Kronobergs län", "Norrbottens län", "Skåne län", "Stockholms län",
+    "Södermanlands län", "Uppsala län", "Värmlands län", "Västerbottens län",
+    "Västernorrlands län", "Västmanlands län", "Västra Götalands län",
+    "Örebro län", "Östergötlands län"
+]
 
 ATTRIBUTION = "Information provided by brottsplatskartan.se"
 BROTTS_URL = "https://brottsplatskartan.se/api"
 
 
-class BrottsplatsKartan: # pylint: disable=too-few-public-methods
+class BrottsplatsKartan:  # pylint: disable=too-few-public-methods
     """ Brottsplatskartan API wrapper. """
 
     def __init__(self, app='bpk', areas=None, longitude=None, latitude=None):
@@ -46,9 +48,8 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
     @staticmethod
     def _get_datetime_as_ymd(date: time.struct_time) -> datetime.datetime:
 
-        datetime_ymd = datetime.datetime(
-            date.tm_year, date.tm_mon, date.tm_mday
-        )
+        datetime_ymd = datetime.datetime(date.tm_year, date.tm_mon,
+                                         date.tm_mday)
 
         return datetime_ymd
 
@@ -71,8 +72,7 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
 
         while brotts_entries_left:
 
-            requests_response = requests.get(
-                url, params=parameters)
+            requests_response = requests.get(url, params=parameters)
 
             if self.is_ratelimited(requests_response):
                 return False
@@ -89,16 +89,14 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
                 break
 
             datetime_today = datetime.date.today()
-            datetime_today_as_time = time.strptime(
-                str(datetime_today), "%Y-%m-%d"
-            )
+            datetime_today_as_time = time.strptime(str(datetime_today),
+                                                   "%Y-%m-%d")
             today_date_ymd = self._get_datetime_as_ymd(datetime_today_as_time)
 
             for incident in incidents:
                 incident_pubdate = incident["pubdate_iso8601"]
-                incident_date = time.strptime(
-                    incident_pubdate, "%Y-%m-%dT%H:%M:%S%z"
-                )
+                incident_date = time.strptime(incident_pubdate,
+                                              "%Y-%m-%dT%H:%M:%S%z")
                 incident_date_ymd = self._get_datetime_as_ymd(incident_date)
 
                 if today_date_ymd == incident_date_ymd:
@@ -113,7 +111,6 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
                 break
 
         return incidents_today
-
 
     def get_incidents(self) -> Union[list, bool]:
         """ Get today's incidents. """
