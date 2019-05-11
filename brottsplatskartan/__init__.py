@@ -3,6 +3,7 @@
 
 import datetime
 import time
+from json.decoder import JSONDecodeError
 from typing import Union
 
 import requests
@@ -76,7 +77,11 @@ class BrottsplatsKartan: # pylint: disable=too-few-public-methods
             if self.is_ratelimited(requests_response):
                 return False
 
-            requests_response = requests_response.json()
+            try:
+                requests_response = requests_response.json()
+            except JSONDecodeError:
+                print("got JSONDecodeError")
+                return False
 
             incidents = requests_response.get("data")
             if not incidents:
