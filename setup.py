@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='brottsplatskartan',
-    version='1.0.3',
+    version='1.0.5',
     description='Simple API wrapper to brottsplatskartan.se.',
     url='https://github.com/chrillux/brottsplatskartan',
     license='MIT',
