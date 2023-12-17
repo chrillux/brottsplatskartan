@@ -68,6 +68,7 @@ class BrottsplatsKartan:  # pylint: disable=too-few-public-methods
 
     @staticmethod
     def _get_datetime_as_ymd(date: time.struct_time) -> datetime.datetime:
+        """Get datetime as ymd."""
         datetime_ymd = datetime.datetime(date.tm_year, date.tm_mon, date.tm_mday)
 
         return datetime_ymd
